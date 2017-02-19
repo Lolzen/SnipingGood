@@ -34,30 +34,34 @@ frame:SetScript("OnUpdate", function(self, elapsed)
 	last = last + elapsed
 	if last > 0.1 then
 		if UnitExists("focus") then
-			if UnitDebuff("focus", GetSpellInfo(187131)) and select(8, UnitDebuff("focus", GetSpellInfo(187131))) == UnitName("player") then
-				local _, _, _, _, _, _, expirationTime = UnitDebuff("focus", GetSpellInfo(187131))
-				icon:SetAlpha(1)
-				border:SetAlpha(1)
-				unitDebuffed:SetText("Focus")
-				if expirationTime and expirationTime - GetTime() - 0.1 > 4 then
-					Time:SetFormattedText("%.1f", expirationTime - GetTime())
-				elseif expirationTime and expirationTime - GetTime() > 0 then
-					Time:SetFormattedText("|cffff0000 %.1f |r", expirationTime - GetTime())
+			if UnitDebuff("focus", GetSpellInfo(187131)) then
+				local _, _, _, _, _, _, expirationTime, unitCaster = UnitDebuff("focus", GetSpellInfo(187131))
+				if unitCaster == UnitName("player") then
+					icon:SetAlpha(1)
+					border:SetAlpha(1)
+					unitDebuffed:SetText("Focus")
+					if expirationTime and expirationTime - GetTime() - 0.1 > 4 then
+						Time:SetFormattedText("%.1f", expirationTime - GetTime())
+					elseif expirationTime and expirationTime - GetTime() > 0 then
+						Time:SetFormattedText("|cffff0000 %.1f |r", expirationTime - GetTime())
+					end
 				end
 			else
 				icon:SetAlpha(0)
 				border:SetAlpha(0)
 			end
-		elseif UnitExists("target") and not UnitExists("Focus") and select(8, UnitDebuff("target", GetSpellInfo(187131))) == UnitName("player")then
+		elseif UnitExists("target") and not UnitExists("Focus") then
 			if UnitDebuff("target", GetSpellInfo(187131)) then
-				local _, _, _, _, _, _, expirationTime = UnitDebuff("target", GetSpellInfo(187131))
-				icon:SetAlpha(1)
-				border:SetAlpha(1)
-				unitDebuffed:SetText("Ziel")
-				if expirationTime and expirationTime - GetTime() - 0.1 > 4 then
-					Time:SetFormattedText("%.1f", expirationTime - GetTime())
-				elseif expirationTime and expirationTime - GetTime() > 0 then
-					Time:SetFormattedText("|cffff0000 %.1f |r", expirationTime - GetTime())
+				local _, _, _, _, _, _, expirationTime, unitCaster = UnitDebuff("target", GetSpellInfo(187131))
+				if unitCaster == UnitName("player") then
+					icon:SetAlpha(1)
+					border:SetAlpha(1)
+					unitDebuffed:SetText("Ziel")
+					if expirationTime and expirationTime - GetTime() - 0.1 > 4 then
+						Time:SetFormattedText("%.1f", expirationTime - GetTime())
+					elseif expirationTime and expirationTime - GetTime() > 0 then
+						Time:SetFormattedText("|cffff0000 %.1f |r", expirationTime - GetTime())
+					end
 				end
 			else
 				icon:SetAlpha(0)
