@@ -36,7 +36,7 @@ frame:SetScript("OnUpdate", function(self, elapsed)
 		if UnitExists("focus") then
 			if UnitDebuff("focus", GetSpellInfo(187131)) then
 				local _, _, _, _, _, _, expirationTime, unitCaster = UnitDebuff("focus", GetSpellInfo(187131))
-				if unitCaster == "player" then
+				if UnitName(unitCaster) == UnitName("player") then
 					icon:SetAlpha(1)
 					border:SetAlpha(1)
 					unitDebuffed:SetText("Focus")
@@ -53,8 +53,7 @@ frame:SetScript("OnUpdate", function(self, elapsed)
 		elseif UnitExists("target") and not UnitExists("Focus") then
 			if UnitDebuff("target", GetSpellInfo(187131)) then
 				local _, _, _, _, _, _, expirationTime, unitCaster = UnitDebuff("target", GetSpellInfo(187131))
-				print(unitCaster)
-				if unitCaster == "player" then
+				if UnitName(unitCaster) == UnitName("player") then
 					icon:SetAlpha(1)
 					border:SetAlpha(1)
 					unitDebuffed:SetText("Ziel")
@@ -68,6 +67,9 @@ frame:SetScript("OnUpdate", function(self, elapsed)
 				icon:SetAlpha(0)
 				border:SetAlpha(0)
 			end
+		else
+			icon:SetAlpha(0)
+			border:SetAlpha(0)
 		end
 		last = 0
 	end
