@@ -3,8 +3,6 @@
 local frame = CreateFrame("Frame", "SnipingGoodFrame", UIParent)
 frame:SetSize(52, 52)
 frame:SetPoint("CENTER", UIParent, "CENTER", 0, -180)
-frame:RegisterEvent("UNIT_AURA", "target")
-frame:RegisterEvent("UNIT_AURA", "focus")
 
 local icon = frame:CreateTexture(nil, "OVERLAY")
 icon:SetTexCoord(.04, .94, .04, .94)
@@ -25,42 +23,47 @@ local Time = border:CreateFontString(nil, "OVERLAY")
 Time:SetPoint("TOP", icon, "BOTTOM", 0, 7)
 Time:SetFont("Interface\\AddOns\\SnipingGood\\media\\DroidSansBold.ttf", 12 ,"OUTLINE")
 Time:SetTextColor(1, 1, 1)
-Time:SetText("12")
 
--- Change the timer
-local SecondsToTimeAbbrev = function(time)
-	local hr, m, s, text
-	if time <= 0 then 
-		text = ""
-	elseif(time < 3600 and time > 40) then
-		m = floor(time / 60)
-		s = mod(time, 60)
-		text = (m == 0 and format("|cffffffff%d", s)) or format("|cffffffff%d:%02d", m, s)
-	elseif time < 60 then
-		m = floor(time / 60)
-		s = mod(time, 60)
-		text = (m == 0 and format("|cffffff00%d", s))
-	else
-		hr = floor(time / 3600)
-		m = floor(mod(time, 3600) / 60)
-		text = format("%d:%2d", hr, m)
-	end
-	return text
-end
+local unitDebuffed = border:CreateFontString(nil, "OVERLAY")
+unitDebuffed:SetPoint("BOTTOM", icon, "TOP", 0, -7)
+unitDebuffed:SetFont("Interface\\AddOns\\SnipingGood\\media\\DroidSansBold.ttf", 12 ,"OUTLINE")
+unitDebuffed:SetTextColor(1, 1, 1)
 
-frame:SetScript("OnEvent",function(self, event, sourceUnit, spellName)
-	local sec
-	if spellName == "Verwundbar" or spellName == "Vulnurable" then
-		--debug
-		print("Verwundbar auf dem target")
-		if UnitExists("Focus") or (UnitExists("target") and not UnitExists("Focus")) then
-			icon:SetAlpha(1)
-			_, _, _, _, _, sec = UnitBuff(sourceUnit, 187131)
-		else
-			icon:SetAlpha(0)
-			sec = 0
+local last = 0
+frame:SetScript("OnUpdate", function(self, elapsed)
+	last = last + elapsed
+	if last > 0.1 then
+		if UnitExists("focus") then
+			if UnitDebuff("focus", GetSpellInfo(187131)) then
+				local _, _, _, _, _, _, expirationTime = UnitDebuff("focus", GetSpellInfo(187131))
+				icon:SetAlpha(1)
+				border:SetAlpha(1)
+				unitDebuffed:SetText("Focus")
+				if expirationTime and expirationTime - GetTime() > 4 then
+					Time:SetFormattedText("%.1f", expirationTime - GetTime())
+				elseif expirationTime and expirationTime - GetTime() > 0 then
+					Time:SetFormattedText("|cffff0000 %.1f |r", expirationTime - GetTime())
+				end
+			else
+				icon:SetAlpha(0)
+				border:SetAlpha(0)
+			end
+		elseif UnitExists("target") and not UnitExists("Focus") then
+			if UnitDebuff("target", GetSpellInfo(187131)) then
+				local _, _, _, _, _, _, expirationTime = UnitDebuff("target", GetSpellInfo(187131))
+				icon:SetAlpha(1)
+				border:SetAlpha(1)
+				unitDebuffed:SetText("Ziel")
+				if expirationTime and expirationTime - GetTime() > 4 then
+					Time:SetFormattedText("%.1f", expirationTime - GetTime())
+				elseif expirationTime and expirationTime - GetTime() > 0 then
+					Time:SetFormattedText("|cffff0000 %.1f |r", expirationTime - GetTime())
+				end
+			else
+				icon:SetAlpha(0)
+				border:SetAlpha(0)
+			end
 		end
+		last = 0
 	end
-	--wenn timer icon alpha 1, sonst 0
-	-- wenn timer <= 4 sec icon blinken, roter text
 end)
