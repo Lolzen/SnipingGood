@@ -45,6 +45,9 @@ frame:SetScript("OnUpdate", function(self, elapsed)
 					elseif expirationTime and expirationTime - GetTime() > 0 then
 						Time:SetFormattedText("|cffff0000 %.1f |r", expirationTime - GetTime())
 					end
+				else
+					icon:SetAlpha(0)
+					border:SetAlpha(0)
 				end
 			else
 				icon:SetAlpha(0)
@@ -62,6 +65,9 @@ frame:SetScript("OnUpdate", function(self, elapsed)
 					elseif expirationTime and expirationTime - GetTime() > 0 then
 						Time:SetFormattedText("|cffff0000 %.1f |r", expirationTime - GetTime())
 					end
+				else
+					icon:SetAlpha(0)
+					border:SetAlpha(0)
 				end
 			else
 				icon:SetAlpha(0)
